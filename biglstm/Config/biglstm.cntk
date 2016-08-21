@@ -1,0 +1,96 @@
+# big lstm based on 
+# a) https://github.com/DeepMark/deepmark/blob/master/torch/text/lstm.lua 
+# b) https://arxiv.org/abs/1602.02410
+# c) guesswork 
+# actual setup will be more clear soon...
+
+RootDir = ".."
+
+ConfigDir = "$RootDir$/Config"
+DataDir   = "$RootDir$/Data"
+OutputDir = "$RootDir$/Output"
+ModelDir  = "$OutputDir$/Models"
+
+deviceId = auto
+
+command=TrainLM
+
+traceLevel = 2
+modelPath  = "$ModelDir$/biglstm.dnn"
+vocabDim = 191245
+
+makemode = false
+precision = "float"
+
+TrainLM={
+    action="train"
+    BrainScriptNetworkBuilder = {
+        inputDim = $vocabDim$
+        labelDim = $vocabDim$
+        embedDim = 512
+        firstHiddenDim = 8192
+        secondHiddenDim = 1024
+        
+        model = Sequential (
+            EmbeddingLayer {embedDim} :
+            Dropout :
+            RecurrentLSTMLayer {firstHiddenDim, cellShape=embedDim} : 
+            Dropout :
+            RecurrentLSTMLayer {secondHiddenDim, cellShape=embedDim} :
+            Dropout :
+            DenseLayer {labelDim}
+        )
+
+        features = Input {inputDim}
+        labels   = Input {labelDim}
+
+        z = model(features)
+
+
+        # slow 
+        # cross_entropy = SumElements(ReduceLogSum(z, axis=1) - TransposeTimes(labels,z))
+        # faster
+        cross_entropy = CrossEntropyWithSoftmax(labels, z)
+        # TODO use sampled softmax
+
+        featureNodes    = (features)
+        labelNodes      = (labels)
+        criterionNodes  = (cross_entropy)
+        evaluationNodes = (cross_entropy)
+        outputNodes     = (z)
+    }
+    
+    # Are these settings being honored?
+    truncated=true
+    truncationLength=20
+    
+    reader = {
+        readerType = "CNTKTextFormatReader"
+        file = "$DataDir$/1bln_small.ctf"
+        randomize = false
+        # very slow...
+        # randomizationWindow = 3000
+        traceLevel = 2
+        input = {
+            features = {
+                alias = "x"
+                format = "sparse"
+                dim = $vocabDim$
+            }
+            labels = {
+                alias = "y"
+                format = "sparse"
+                dim = $vocabDim$
+            }
+        }
+    }
+    
+    SGD={
+        maxEpochs = 1
+        dropout = 0.25
+        learningRatesPerSample = 0.001
+        numMBsToShowResult = 1
+        gradientClippingWithTruncation = false
+        clippingThresholdPerSample = 1.0
+    }
+}
