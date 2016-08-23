@@ -4,23 +4,17 @@
 # c) guesswork 
 # actual setup will be more clear soon...
 
-RootDir = ".."
-
-ConfigDir = "$RootDir$/Config"
-DataDir   = "$RootDir$/Data"
-OutputDir = "$RootDir$/Output"
-ModelDir  = "$OutputDir$/Models"
-
-deviceId = auto
+rootDir = ".."
+configDir = "$RootDir$/Config"
+dataDir   = "$RootDir$/Data"
+modelDir  = "$RootDir$/Output/Models"
 
 command=TrainLM
 
-traceLevel = 2
-modelPath  = "$ModelDir$/biglstm.dnn"
-vocabDim = 191245
+deviceId = "auto"; traceLevel = 1; precision = "float"; makeMode = false
 
-makemode = false
-precision = "float"
+modelPath = "$ModelDir$/biglstm.dnn"
+vocabDim = 191245
 
 TrainLM={
     action="train"
@@ -28,69 +22,62 @@ TrainLM={
         inputDim = $vocabDim$
         labelDim = $vocabDim$
         embedDim = 512
-        firstHiddenDim = 8192
-        secondHiddenDim = 1024
+        hiddenDim = (8192:1024)
         
         model = Sequential (
             EmbeddingLayer {embedDim} :
             Dropout :
-            RecurrentLSTMLayer {firstHiddenDim, cellShape=embedDim} : 
+            RecurrentLSTMLayer {hiddenDim[0], cellShape=embedDim} : 
             Dropout :
-            RecurrentLSTMLayer {secondHiddenDim, cellShape=embedDim} :
+            RecurrentLSTMLayer {hiddenDim[1], cellShape=embedDim} :
             Dropout :
             DenseLayer {labelDim}
         )
 
         features = Input {inputDim}
-        labels   = Input {labelDim}
+        labels   = Input {labelDim, sparse=true}
 
         z = model(features)
 
-
-        # slow 
-        # cross_entropy = SumElements(ReduceLogSum(z, axis=1) - TransposeTimes(labels,z))
-        # faster
-        cross_entropy = CrossEntropyWithSoftmax(labels, z)
+        # for sparse labels 
+        crossEntropy = ReduceLogSum(z, axis=1) - TransposeTimes(labels,z)
+        # for dense labels
+        # crossEntropy = CrossEntropyWithSoftmax(labels, z)
         # TODO use sampled softmax
 
         featureNodes    = (features)
         labelNodes      = (labels)
-        criterionNodes  = (cross_entropy)
-        evaluationNodes = (cross_entropy)
+        criterionNodes  = (crossEntropy)
+        evaluationNodes = (crossEntropy)
         outputNodes     = (z)
     }
     
-    # Are these settings being honored?
     truncated=true
+    # truncationLength is not honored. TODO fix it
     truncationLength=20
     
     reader = {
         readerType = "CNTKTextFormatReader"
         file = "$DataDir$/1bln_small.ctf"
-        randomize = false
-        # very slow...
-        # randomizationWindow = 3000
-        traceLevel = 2
+        # fast but a memory hog
+        # randomize = false
+        # slower but memory friendly
+        randomize = true 
+        randomizationWindow = 30000
+        traceLevel = 0
         input = {
-            features = {
-                alias = "x"
-                format = "sparse"
-                dim = $vocabDim$
-            }
-            labels = {
-                alias = "y"
-                format = "sparse"
-                dim = $vocabDim$
-            }
+            features = { alias = "x"; dim = $vocabDim$; format = "sparse" }
+            labels =   { alias = "y"; dim = $vocabDim$; format = "sparse" }
         }
     }
     
     SGD={
         maxEpochs = 1
-        dropout = 0.25
+        dropoutRate = 0.25
         learningRatesPerSample = 0.001
-        numMBsToShowResult = 1
         gradientClippingWithTruncation = false
         clippingThresholdPerSample = 1.0
+        minibatchSize = 300
+        numMBsToShowResult = 1
     }
 }
