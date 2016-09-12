@@ -1,0 +1,438 @@
+
+
+SpliceDepth (_, tag='') = {
+     ArrayTransposeDimensions (_, axis1, axis2) = {
+         inputsT[i:0..Length(_)-1] = TransposeDimensions (_[i], axis1, axis2)
+     }.inputsT
+     out = [tag1=tag; out=TransposeDimensions (RowStack (ArrayTransposeDimensions (_, 1, 3)), 1, 3, tag=tag)].out
+}.out
+
+inceptionv3 = Sequential(
+    ConvolutionalLayer{32, (3:3), stride=(2:2), pad=false, lowerPad=(0:0), bias=false} :
+    BatchNormalizationLayer{spatialRank = 2} :
+    ReLU :
+    ConvolutionalLayer{32, (3:3), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+    BatchNormalizationLayer{spatialRank = 2} :
+    ReLU :
+    ConvolutionalLayer{64, (3:3), stride=(1:1), pad=true , lowerPad=(1:1), bias=false} :
+    BatchNormalizationLayer{spatialRank = 2} :
+    ReLU :
+    MaxPoolingLayer{(3:3), stride = (2:2), pad=false} :
+    ConvolutionalLayer{80, (1:1), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+    BatchNormalizationLayer{spatialRank = 2} :
+    ReLU :
+    ConvolutionalLayer{192, (3:3), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+    BatchNormalizationLayer{spatialRank = 2} :
+    ReLU :
+    MaxPoolingLayer{(3:3), stride = (2:2), pad=false} :
+    Parallel(
+        Sequential(
+            ConvolutionalLayer{64, (1:1), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU
+        ) :
+        Sequential(
+            ConvolutionalLayer{48, (1:1), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{64, (5:5), stride=(1:1), pad=true , lowerPad=(2:2), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU
+        ) :
+        Sequential(
+            ConvolutionalLayer{64, (1:1), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{96, (3:3), stride=(1:1), pad=true , lowerPad=(1:1), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{96, (3:3), stride=(1:1), pad=true , lowerPad=(1:1), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU
+        ) :
+        Sequential(
+            AveragePoolingLayer{(3:3), stride = (1:1), pad=true } :
+            ConvolutionalLayer{32, (1:1), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU
+        )
+    , SpliceDepth) :
+    Parallel(
+        Sequential(
+            ConvolutionalLayer{64, (1:1), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU
+        ) :
+        Sequential(
+            ConvolutionalLayer{48, (1:1), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{64, (5:5), stride=(1:1), pad=true , lowerPad=(2:2), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU
+        ) :
+        Sequential(
+            ConvolutionalLayer{64, (1:1), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{96, (3:3), stride=(1:1), pad=true , lowerPad=(1:1), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{96, (3:3), stride=(1:1), pad=true , lowerPad=(1:1), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU
+        ) :
+        Sequential(
+            AveragePoolingLayer{(3:3), stride = (1:1), pad=true } :
+            ConvolutionalLayer{64, (1:1), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU
+        )
+    , SpliceDepth) :
+    Parallel(
+        Sequential(
+            ConvolutionalLayer{64, (1:1), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU
+        ) :
+        Sequential(
+            ConvolutionalLayer{48, (1:1), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{64, (5:5), stride=(1:1), pad=true , lowerPad=(2:2), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU
+        ) :
+        Sequential(
+            ConvolutionalLayer{64, (1:1), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{96, (3:3), stride=(1:1), pad=true , lowerPad=(1:1), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{96, (3:3), stride=(1:1), pad=true , lowerPad=(1:1), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU
+        ) :
+        Sequential(
+            AveragePoolingLayer{(3:3), stride = (1:1), pad=true } :
+            ConvolutionalLayer{64, (1:1), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU
+        )
+    , SpliceDepth) :
+    Parallel(
+        Sequential(
+            ConvolutionalLayer{384, (3:3), stride=(2:2), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU
+        ) :
+        Sequential(
+            ConvolutionalLayer{64, (1:1), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{96, (3:3), stride=(1:1), pad=true , lowerPad=(1:1), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{96, (3:3), stride=(2:2), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU
+        ) :
+        Sequential(
+            MaxPoolingLayer{(3:3), stride = (2:2), pad=false}
+        )
+    , SpliceDepth) :
+    Parallel(
+        Sequential(
+            ConvolutionalLayer{192, (1:1), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU
+        ) :
+        Sequential(
+            ConvolutionalLayer{128, (1:1), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{128, (7:1), stride=(1:1), pad=true , lowerPad=(3:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{192, (1:7), stride=(1:1), pad=true , lowerPad=(0:3), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU
+        ) :
+        Sequential(
+            ConvolutionalLayer{128, (1:1), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{128, (1:7), stride=(1:1), pad=true , lowerPad=(0:3), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{128, (7:1), stride=(1:1), pad=true , lowerPad=(3:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{128, (1:7), stride=(1:1), pad=true , lowerPad=(0:3), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{192, (7:1), stride=(1:1), pad=true , lowerPad=(3:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU
+        ) :
+        Sequential(
+            AveragePoolingLayer{(3:3), stride = (1:1), pad=true } :
+            ConvolutionalLayer{192, (1:1), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU
+        )
+    , SpliceDepth) :
+    Parallel(
+        Sequential(
+            ConvolutionalLayer{192, (1:1), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU
+        ) :
+        Sequential(
+            ConvolutionalLayer{160, (1:1), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{160, (7:1), stride=(1:1), pad=true , lowerPad=(3:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{192, (1:7), stride=(1:1), pad=true , lowerPad=(0:3), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU
+        ) :
+        Sequential(
+            ConvolutionalLayer{160, (1:1), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{160, (1:7), stride=(1:1), pad=true , lowerPad=(0:3), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{160, (7:1), stride=(1:1), pad=true , lowerPad=(3:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{160, (1:7), stride=(1:1), pad=true , lowerPad=(0:3), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{192, (7:1), stride=(1:1), pad=true , lowerPad=(3:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU
+        ) :
+        Sequential(
+            AveragePoolingLayer{(3:3), stride = (1:1), pad=true } :
+            ConvolutionalLayer{192, (1:1), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU
+        )
+    , SpliceDepth) :
+    Parallel(
+        Sequential(
+            ConvolutionalLayer{192, (1:1), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU
+        ) :
+        Sequential(
+            ConvolutionalLayer{160, (1:1), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{160, (7:1), stride=(1:1), pad=true , lowerPad=(3:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{192, (1:7), stride=(1:1), pad=true , lowerPad=(0:3), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU
+        ) :
+        Sequential(
+            ConvolutionalLayer{160, (1:1), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{160, (1:7), stride=(1:1), pad=true , lowerPad=(0:3), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{160, (7:1), stride=(1:1), pad=true , lowerPad=(3:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{160, (1:7), stride=(1:1), pad=true , lowerPad=(0:3), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{192, (7:1), stride=(1:1), pad=true , lowerPad=(3:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU
+        ) :
+        Sequential(
+            AveragePoolingLayer{(3:3), stride = (1:1), pad=true } :
+            ConvolutionalLayer{192, (1:1), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU
+        )
+    , SpliceDepth) :
+    Parallel(
+        Sequential(
+            ConvolutionalLayer{192, (1:1), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU
+        ) :
+        Sequential(
+            ConvolutionalLayer{192, (1:1), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{192, (7:1), stride=(1:1), pad=true , lowerPad=(3:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{192, (1:7), stride=(1:1), pad=true , lowerPad=(0:3), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU
+        ) :
+        Sequential(
+            ConvolutionalLayer{192, (1:1), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{192, (1:7), stride=(1:1), pad=true , lowerPad=(0:3), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{192, (7:1), stride=(1:1), pad=true , lowerPad=(3:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{192, (1:7), stride=(1:1), pad=true , lowerPad=(0:3), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{192, (7:1), stride=(1:1), pad=true , lowerPad=(3:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU
+        ) :
+        Sequential(
+            AveragePoolingLayer{(3:3), stride = (1:1), pad=true } :
+            ConvolutionalLayer{192, (1:1), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU
+        )
+    , SpliceDepth) :
+    Parallel(
+        Sequential(
+            ConvolutionalLayer{192, (1:1), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{320, (3:3), stride=(2:2), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU
+        ) :
+        Sequential(
+            ConvolutionalLayer{192, (1:1), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{192, (7:1), stride=(1:1), pad=true , lowerPad=(3:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{192, (1:7), stride=(1:1), pad=true , lowerPad=(0:3), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{192, (3:3), stride=(2:2), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU
+        ) :
+        Sequential(
+            MaxPoolingLayer{(3:3), stride = (2:2), pad=false}
+        )
+    , SpliceDepth) :
+    Parallel(
+        Sequential(
+            ConvolutionalLayer{320, (1:1), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU
+        ) :
+        Sequential(
+            ConvolutionalLayer{384, (1:1), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            Parallel(
+                Sequential(
+                    ConvolutionalLayer{384, (3:1), stride=(1:1), pad=true , lowerPad=(1:0), bias=false} :
+                    BatchNormalizationLayer{spatialRank = 2} :
+                    ReLU
+                ) :
+                Sequential(
+                    ConvolutionalLayer{384, (1:3), stride=(1:1), pad=true , lowerPad=(0:1), bias=false} :
+                    BatchNormalizationLayer{spatialRank = 2} :
+                    ReLU
+                )
+            , SpliceDepth)
+        ) :
+        Sequential(
+            ConvolutionalLayer{448, (1:1), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{384, (3:3), stride=(1:1), pad=true , lowerPad=(1:1), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            Parallel(
+                Sequential(
+                    ConvolutionalLayer{384, (3:1), stride=(1:1), pad=true , lowerPad=(1:0), bias=false} :
+                    BatchNormalizationLayer{spatialRank = 2} :
+                    ReLU
+                ) :
+                Sequential(
+                    ConvolutionalLayer{384, (1:3), stride=(1:1), pad=true , lowerPad=(0:1), bias=false} :
+                    BatchNormalizationLayer{spatialRank = 2} :
+                    ReLU
+                )
+            , SpliceDepth)
+        ) :
+        Sequential(
+            AveragePoolingLayer{(3:3), stride = (1:1), pad=true } :
+            ConvolutionalLayer{192, (1:1), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU
+        )
+    , SpliceDepth) :
+    Parallel(
+        Sequential(
+            ConvolutionalLayer{320, (1:1), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU
+        ) :
+        Sequential(
+            ConvolutionalLayer{384, (1:1), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            Parallel(
+                Sequential(
+                    ConvolutionalLayer{384, (3:1), stride=(1:1), pad=true , lowerPad=(1:0), bias=false} :
+                    BatchNormalizationLayer{spatialRank = 2} :
+                    ReLU
+                ) :
+                Sequential(
+                    ConvolutionalLayer{384, (1:3), stride=(1:1), pad=true , lowerPad=(0:1), bias=false} :
+                    BatchNormalizationLayer{spatialRank = 2} :
+                    ReLU
+                )
+            , SpliceDepth)
+        ) :
+        Sequential(
+            ConvolutionalLayer{448, (1:1), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            ConvolutionalLayer{384, (3:3), stride=(1:1), pad=true , lowerPad=(1:1), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU :
+            Parallel(
+                Sequential(
+                    ConvolutionalLayer{384, (3:1), stride=(1:1), pad=true , lowerPad=(1:0), bias=false} :
+                    BatchNormalizationLayer{spatialRank = 2} :
+                    ReLU
+                ) :
+                Sequential(
+                    ConvolutionalLayer{384, (1:3), stride=(1:1), pad=true , lowerPad=(0:1), bias=false} :
+                    BatchNormalizationLayer{spatialRank = 2} :
+                    ReLU
+                )
+            , SpliceDepth)
+        ) :
+        Sequential(
+            MaxPoolingLayer{(3:3), stride = (1:1), pad=true } :
+            ConvolutionalLayer{192, (1:1), stride=(1:1), pad=false, lowerPad=(0:0), bias=false} :
+            BatchNormalizationLayer{spatialRank = 2} :
+            ReLU
+        )
+    , SpliceDepth) :
+    AveragePoolingLayer{(5:5), stride = (1:1), pad=false}
+)
+

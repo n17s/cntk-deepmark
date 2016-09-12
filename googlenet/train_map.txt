@@ -1,0 +1,16 @@
+sample.zip@/1.jpg	0
+sample.zip@/13.jpg	1
+sample.zip@/14.jpg	2
+sample.zip@/15.jpg	3
+sample.zip@/18.jpg	4
+sample.zip@/19.jpg	5
+sample.zip@/2.jpg	6
+sample.zip@/20.jpg	7
+sample.zip@/22.jpg	8
+sample.zip@/24.jpg	9
+sample.zip@/3.jpg	10
+sample.zip@/4.jpg	11
+sample.zip@/5.jpg	12
+sample.zip@/6.jpg	13
+sample.zip@/7.jpg	14
+sample.zip@/8.jpg	15

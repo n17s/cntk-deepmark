@@ -1,0 +1,50 @@
+# googlenet based on https://github.com/DeepMark/deepmark/blob/master/torch/image%2Bvideo/inceptionv3.lua
+# actual setup will be more clear soon...
+
+command=TrainInception
+
+deviceId = "auto"; traceLevel = 1; precision = "float"; makeMode = false
+
+modelPath = "./Models/googlenet.dnn"
+
+perfTraceLevel=1
+
+TrainInception={
+    action="train"
+
+    BrainScriptNetworkBuilder =  {
+        include "inceptionv3.bs"
+        model = Sequential(
+                    inceptionv3 :
+                    DenseLayer{1008}
+        )
+        features = Input{224:224:3}
+        labels = Input{1008}
+
+        z = model(features)
+        #crossEntropy = ReduceLogSum(z, axis=1) - TransposeTimes(labels,z)
+        crossEntropy = CrossEntropyWithSoftmax(labels, z)
+        criterionNodes = (crossEntropy)
+    }
+    
+    reader={
+        readerType=ImageReader
+        file=train_map.txt
+        features={
+            width=224
+            height=224
+            channels=3
+        }
+        labels={
+            labelDim=1008
+        }
+    }
+    
+    SGD={
+        maxEpochs = 3
+        epochSize = 2560
+        learningRatesPerSample = 0.001
+        minibatchSize = 4
+        numMBsToShowResult = 1
+    }
+}
