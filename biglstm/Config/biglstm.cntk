@@ -23,14 +23,11 @@ TrainLM={
         labelDim = $vocabDim$
         embedDim = 512
         hiddenDim = (8192:1024)
+        projDim = (512:512)
         
         model = Sequential (
             EmbeddingLayer {embedDim} :
-            Dropout :
-            RecurrentLSTMLayer {hiddenDim[0], cellShape=embedDim} : 
-            Dropout :
-            RecurrentLSTMLayer {hiddenDim[1], cellShape=embedDim} :
-            Dropout :
+            RecurrentLSTMLayerStack {hiddenDim, cellShapes=projDim, allowOptimizedEngine = true} :
             DenseLayer {labelDim}
         )
 
@@ -74,10 +71,10 @@ TrainLM={
     SGD={
         maxEpochs = 1
         dropoutRate = 0.25
-        learningRatesPerSample = 0.001
+        learningRatesPerSample = 0.01
         gradientClippingWithTruncation = false
         clippingThresholdPerSample = 1.0
-        minibatchSize = 300
-        numMBsToShowResult = 1
+        minibatchSize = 512
+        numMBsToShowResult = 2
     }
 }
